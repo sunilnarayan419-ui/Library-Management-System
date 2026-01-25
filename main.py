@@ -4,20 +4,25 @@
 
 import datetime
 import os
+
 class LMS:
     """ This class is used to keep record of book library.
     It has total six module: "Display Books", "Search Books", "Issue Books" ,
     "Add Books", "Delete Books", "Return Books" """
+
     def __init__(self, list_of_books, library_name):
         self.list_of_books = "books.csv"
         self.issued_file = "issued_books.csv"
         self.log_file = "issue_log.txt"
         self.library_name = library_name
         self.books_dict = {}
+
         Id = 101
+
         for file in [self.list_of_books, self.issued_file, self.log_file]:
             if not os.path.exists(file):
                 open(file, "w").close()
+
         with open(self.list_of_books) as bk:
             for line in bk.readlines():
                 self.books_dict[str(Id)] = {
@@ -27,6 +32,7 @@ class LMS:
                     "Status": "Available"
                 }
                 Id += 1
+
     # DISPLAY
     def display_books(self, sort_by_title=False):
         books = sorted(
@@ -37,6 +43,7 @@ class LMS:
         print("-" * 45)
         for key, value in books:
             print(key, value["books_title"], "[", value["Status"], "]")
+
     # SEARCH
     def search_books(self):
         query = input("Enter Book ID or Title keyword: ").lower()
@@ -47,6 +54,7 @@ class LMS:
                 found = True
         if not found:
             print("No matching book found.")
+
     # ISSUE
     def Issue_books(self):
         book_id = input("Enter book ID: ")
@@ -68,6 +76,7 @@ class LMS:
                 f"{name} issued '{self.books_dict[book_id]['books_title']}' on {date}\n"
             )
         print(f"Book issued successfully on {date}")
+
     # ADD
     def add_books(self):
         title = input("Enter book title: ").strip()
@@ -84,6 +93,7 @@ class LMS:
         with open(self.list_of_books, "a") as f:
             f.write(title + "\n")
         print("Book added successfully!")
+
     # DELETE
     def delete_books(self):
         book_id = input("Enter book ID to delete: ")
@@ -102,6 +112,7 @@ class LMS:
             for v in self.books_dict.values():
                 f.write(v["books_title"] + "\n")
         print("Book deleted successfully!")
+
     # RETURN
     def return_books(self):
         book_id = input("Enter book ID: ")
@@ -113,6 +124,7 @@ class LMS:
         self.books_dict[book_id]["lender_name"] = ""
         self.books_dict[book_id]["Issue_date"] = ""
         print(f"Book returned successfully on {date}")
+
     # SUMMARY
     def show_summary(self):
         total = len(self.books_dict)
@@ -121,6 +133,7 @@ class LMS:
             if b["Status"] != "Available"
         )
         print(f"Total: {total} | Issued: {issued} | Available: {total - issued}")
+
     # REPORT
     def export_report(self):
         with open("library_report.txt", "w") as r:
@@ -130,13 +143,16 @@ class LMS:
                 r.write(f"{k} - {v['books_title']} [{v['Status']}]\n")
         print("Report exported!")
 
+
 # MAIN
 try:
     lms = LMS("books.csv", "Central Library UOH")
     ADMIN_PASSWORD = "admin123"
+
     while True:
-        print(f"\nWelcome to {lms.library_name}")
-        print("""
+        try:
+            print(f"\nWelcome to {lms.library_name}")
+            print("""
 D - Display Books
 S - Search Books
 I - Issue Book
@@ -147,32 +163,41 @@ C - Summary
 E - Export Report
 Q - Quit
 """)
-        choice = input("Enter choice: ").lower()
-        if choice == "a" or choice == "b":
-            pwd = input("Enter admin password: ")
-            if pwd != ADMIN_PASSWORD:
-                print("Wrong password!")
-                continue
-        if choice == "d":
-            lms.display_books()
-        elif choice == "s":
-            lms.search_books()
-        elif choice == "i":
-            lms.Issue_books()
-        elif choice == "a":
-            lms.add_books()
-        elif choice == "b":
-            lms.delete_books()
-        elif choice == "r":
-            lms.return_books()
-        elif choice == "c":
-            lms.show_summary()
-        elif choice == "e":
-            lms.export_report()
-        elif choice == "q":
-            print("Thank you!")
-            break
-        else:
-            input("Press Enter to continue...")
+
+            choice = input("Enter choice: ").lower()
+
+            if choice == "a" or choice == "b":
+                pwd = input("Enter admin password: ")
+                if pwd != ADMIN_PASSWORD:
+                    print("Wrong password!")
+                    continue
+
+            if choice == "d":
+                lms.display_books()
+            elif choice == "s":
+                lms.search_books()
+            elif choice == "i":
+                lms.Issue_books()
+            elif choice == "a":
+                lms.add_books()
+            elif choice == "b":
+                lms.delete_books()
+            elif choice == "r":
+                lms.return_books()
+            elif choice == "c":
+                lms.show_summary()
+            elif choice == "e":
+                lms.export_report()
+            elif choice == "q":
+                print("Thank you!")
+                break
+            else:
+                input("Press Enter to continue...")
+
+        except Exception as e:
+            print("Something went wrong. Please check your input!!")
+            print("Error details:", e)
+
 except Exception as e:
     print("Something went wrong. Please check your input!!")
+    print("Error details:", e)
