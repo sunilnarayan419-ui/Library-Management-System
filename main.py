@@ -6,158 +6,200 @@ import datetime
 import os
 
 class LMS:
-    """ This class is used to keep record of books in a library management system.
-    It has total four module: "Display books","Issue books", "Add books","Delete Books", "Return books" """
+    """ This class is used to keep record of book library.
+    It has total six module: "Display Books", "Search Books", "Issue Books" , " Add Books", "Delete Books" , "Return Books" """
 
     def __init__(self, list_of_books, library_name):
         self.list_of_books = "books.csv"
+        self.issued_file = "issued_books.csv"
+        self.log_file = "issue_log.txt"
         self.library_name = library_name
         self.books_dict = {}
         Id = 101
 
+        for file in [self.list_of_books, self.issued_file, self.log_file]:
+            if not os.path.exists(file):
+                open(file, "w").close()
+
         with open(self.list_of_books) as bk:
-            content = bk.readlines()
-            for line in content:
-                self.books_dict.update({
-                    str(Id): {
-                        "books_title": line.strip(),
-                        "lender_name": "",
-                        "Issue_date": "",
-                        "Status": "Available"
-                    }
-                })
+            for line in bk.readlines():
+                self.books_dict[str(Id)] = {
+                    "books_title": line.strip(),
+                    "lender_name": "",
+                    "Issue_date": "",
+                    "Status": "Available"
+                }
                 Id += 1
 
-    def display_books(self):
-        print("______________List of books___________________")
-        print("Book Id\t\tTitle\t\tStatus")
-        print("_______________________________________________")
+# DISPLAY
+    def display_books(self, sort_by_title=False):
+        books = sorted(
+            self.books_dict.items(),
+            key=lambda x: x[1]["books_title"]
+        ) if sort_by_title else self.books_dict.items()
+
+        print("\nID\tTitle\t\t\tStatus")
+        print("-" * 45)
+        for key, value in books:
+            print(key, value["books_title"], "[", value["Status"], "]")
+
+# SEARCH
+    def search_books(self):
+        query = input("Enter Book ID or Title keyword: ").lower()
+        found = False
         for key, value in self.books_dict.items():
-            print(key, "\t\t", value["books_title"], "[", value["Status"], "]")
+            if query == key or query in value["books_title"].lower():
+                print(key, value["books_title"], "[", value["Status"], "]")
+                found = True
+        if not found:
+            print("No matching book found.")
 
+# ISSUE 
     def Issue_books(self):
-        books_id = input("Enter book ID: ")
-        current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
-        if books_id not in self.books_dict:
-            print("Book ID not found !!")
+        book_id = input("Enter book ID: ")
+        if book_id not in self.books_dict:
+            print("Invalid Book ID")
             return
 
-        if self.books_dict[books_id]["Status"] != "Available":
-            print(
-                f"This book is already issued to {self.books_dict[books_id]['lender_name']} "
-                f"on {self.books_dict[books_id]['Issue_date']}"
-            )
+        if self.books_dict[book_id]["Status"] != "Available":
+            print("Book already issued!")
             return
 
-        your_name = input("Enter your name: ")
-        self.books_dict[books_id]["lender_name"] = your_name
-        self.books_dict[books_id]["Issue_date"] = current_date
-        self.books_dict[books_id]["Status"] = "Already Issued"
-        print("Books Issued Successfully !!")
+        name = input("Enter your name: ")
+        date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
+        self.books_dict[book_id]["lender_name"] = name
+        self.books_dict[book_id]["Issue_date"] = date
+        self.books_dict[book_id]["Status"] = "Already Issued"
+
+        with open(self.issued_file, "a") as f:
+            f.write(f"{book_id},{name},{date}\n")
+
+        with open(self.log_file, "a") as log:
+            log.write(f"{name} issued '{self.books_dict[book_id]['books_title']}' on {date}\n")
+
+        print("Book issued successfully!")
+
+# ADD 
     def add_books(self):
-        new_book = input("Enter book title: ").strip()
-
-        if new_book == "":
-            print("Title cannot be empty!")
+        title = input("Enter book title: ").strip()
+        if not title:
+            print("Empty title not allowed")
             return
-
-        if len(new_book) > 25:
-            print("Book title too long! Max 25 chars.")
-            return
-
-        with open(self.list_of_books, "a") as bk:
-            bk.write(new_book + "\n")
 
         new_id = str(int(max(self.books_dict.keys(), default="100")) + 1)
-
         self.books_dict[new_id] = {
-            "books_title": new_book,
+            "books_title": title,
             "lender_name": "",
             "Issue_date": "",
             "Status": "Available"
         }
 
-        print(f"Book '{new_book}' added successfully!")
-        
+        with open(self.list_of_books, "a") as f:
+            f.write(title + "\n")
+
+        print("Book added successfully!")
+
+# DELETE
     def delete_books(self):
-        book_id = input("Enter book ID to delete: ").strip()
-
-        if book_id == "":
-            print("Book ID cannot be empty!")
-            return
+        book_id = input("Enter book ID to delete: ")
 
         if book_id not in self.books_dict:
-            print("Book ID not found!")
+            print("Book ID not found")
             return
 
-        deleted_book = self.books_dict[book_id]["books_title"]
+        if self.books_dict[book_id]["Status"] != "Available":
+            print("Cannot delete issued book!")
+            return
+
+        confirm = input("Are you sure? (y/n): ").lower()
+        if confirm != "y":
+            print("Delete cancelled")
+            return
+
         del self.books_dict[book_id]
-        
-        with open(self.list_of_books, "w") as bk:
-            for value in self.books_dict.values():
-                bk.write(value["books_title"] + "\n")
 
-        print(f"Book '{deleted_book}' deleted successfully!")
+        with open(self.list_of_books, "w") as f:
+            for v in self.books_dict.values():
+                f.write(v["books_title"] + "\n")
 
+        print("Book deleted successfully!")
+
+# RETURN
     def return_books(self):
-        book_id = input("Enter your book ID: ")
+        book_id = input("Enter book ID: ")
 
         if book_id not in self.books_dict:
-            print("Book ID not found!")
+            print("Invalid Book ID")
             return
 
-        if self.books_dict[book_id]["Status"] == "Available":
-            print("Book already available in library.")
-            return
-
+        self.books_dict[book_id]["Status"] = "Available"
         self.books_dict[book_id]["lender_name"] = ""
         self.books_dict[book_id]["Issue_date"] = ""
-        self.books_dict[book_id]["Status"] = "Available"
         print("Book returned successfully!")
 
+# SUMMARY 
+    def show_summary(self):
+        total = len(self.books_dict)
+        issued = sum(1 for b in self.books_dict.values() if b["Status"] != "Available")
+        print(f"Total: {total} | Issued: {issued} | Available: {total - issued}")
 
+# REPORT
+    def export_report(self):
+        with open("library_report.txt", "w") as r:
+            r.write("Library Report\n")
+            r.write("=" * 20 + "\n")
+            for k, v in self.books_dict.items():
+                r.write(f"{k} - {v['books_title']} [{v['Status']}]\n")
+        print("Report exported!")
+
+# MAIN
 try:
-    myLMS = LMS("list_of_book.csv", "Central Library UOH")
+    lms = LMS("books.csv", "Central Library UOH")
 
-    press_key_list = {
-        "D": "Display Books",
-        "I": "Issue Books",
-        "A": "Add Books",
-        "B": "Delete Books",
-        "R": "Return Books",
-        "Q": "Quit"
-    }
+    ADMIN_PASSWORD = "admin123"
 
     while True:
-        print(f"\n__________ Welcome To {myLMS.library_name} __________")
+        print(f"\nWelcome to {lms.library_name}")
+        print("""
+D - Display Books
+S - Search Books
+I - Issue Book
+A - Add Book (Admin)
+B - Delete Book (Admin)
+R - Return Book
+C - Summary
+E - Export Report
+Q - Quit
+""")
 
-        for key, value in press_key_list.items():
-            print("Press", key, "To", value)
+        choice = input("Enter choice: ").lower()
 
-        key_press = input("Press Key: ").lower()
+        if choice == "a" or choice == "b":
+            pwd = input("Enter admin password: ")
+            if pwd != ADMIN_PASSWORD:
+                print("Wrong password!")
+                continue
 
-        if key_press == "i":
-            myLMS.Issue_books()
-
-        elif key_press == "a":
-            myLMS.add_books()
-            
-        elif key_press == "b":
-            myLMS.delete_books() 
-
-        elif key_press == "d":
-            myLMS.display_books()
-
-        elif key_press == "r":
-            myLMS.return_books()
-
-        elif key_press == "q":
-            print("Exiting LMS. Goodbye!")
+        if choice == "d":
+            lms.display_books()
+        elif choice == "s":
+            lms.search_books()
+        elif choice == "i":
+            lms.Issue_books()
+        elif choice == "a":
+            lms.add_books()
+        elif choice == "b":
+            lms.delete_books()
+        elif choice == "r":
+            lms.return_books()
+        elif choice == "c":
+            lms.show_summary()
+        elif choice == "e":
+            lms.export_report()
+        elif choice == "q":
+            print("Thank you!")
             break
 
-        input("\nPress Enter to continue...")
-
 except Exception as e:
-    print("Something went wrong:", e)
+    print("Error:", e)
