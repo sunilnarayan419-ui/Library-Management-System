@@ -2,9 +2,6 @@
 # Author : Sunil Mandloi 
 # Email : sunilnarayan419@gmail.com 
 
-# This is The Python Program of Library Management System.
-# Author : Sunil Mandloi 
-# Email : sunilnarayan419@gmail.com 
 import datetime
 import os
 class LMS:
