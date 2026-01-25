@@ -163,6 +163,8 @@ Q - Quit
             lms.export_report()
         elif choice == "q":
             print("Thank you!")
-            break
+            break 
+        else: 
+            continue 
 except Exception as e:
     print("Error:", e)
