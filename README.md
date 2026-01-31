@@ -1,59 +1,74 @@
-# 📚 Library Management System (LMS)
+# 📚 Modern AI Library Management System (v4.0)
 
-A **console-based Library Management System** developed using **Python**, designed to manage basic library operations such as **adding, searching, issuing, returning, and deleting books** through a menu-driven interface.
+![License](https://img.shields.io/badge/license-MIT-blue.svg) ![Python](https://img.shields.io/badge/python-3.x-blue) ![React](https://img.shields.io/badge/react-18-cyan) ![PWA](https://img.shields.io/badge/PWA-Ready-purple)
 
-This project demonstrates **Object-Oriented Programming (OOP)**, **file handling**, and **exception handling**, making it suitable for **hackathons, academic projects, and Python practice**.
+A state-of-the-art Library Management System that modernizes a legacy Python backend with a stunning, AI-powered React frontend. 
 
----
+## 🚀 Features
 
-##  Features
+### ✨ Modern UI/UX
+- **Glassmorphism Design**: Sleek, modern interface with frosted glass effects.
+- **Dark/Light Mode**: Fully adaptive theming with persistent preferences.
+- **Responsive & PWA**: Mobile-first design that can be installed as an App on your phone.
 
--  Display all books with ID and availability status  
--  Search books by **Book ID** or **Title keyword**  
--  Issue books with **date & time tracking**  
--  Return issued books with timestamp  
--  Add new books (Admin only)  
--  Delete books safely (Admin only)  
--  View summary (Total / Issued / Available books)  
--  Export library report to a text file  
--  Persistent storage using CSV files  
--  Admin-protected operations  
+### 🤖 AI-Powered
+- **AI Librarian Chatbot**: Ask "Who is Sherlock Holmes?" or "Recommend a mystery book" and get context-aware answers.
+- **Smart Recommendations**: Visual "Recommended for You" section based on reading patterns.
+- **Explainable AI**: Visual badges explaining *why* a book was recommended.
 
----
+### 🛠️ Advanced Management
+- **Role-Based Access Control (RBAC)**:
+  - **Admin**: Full control, manage books (Add/Delete/Issue/Return), view all history.
+  - **Librarian**: Issue/Return books, view history.
+  - **Student**: View profile, search books, get recommendations.
+- **Visual Analytics**: Interactive dashboard with charts and real-time statistics.
+- **Audit Logs**: Full transaction history tracking.
 
-##  Technologies Used
+## 🏗️ Architecture
 
-- **Python 3**
-- Built-in modules:
-  - `datetime`
-  - `os`
-- File handling using **CSV & TXT files**
-- Console-based UI
+This project uses a unique "Backend Adapter" pattern to modernize a legacy system without rewriting it:
+- **Backend**: Python (Flask) acts as a wrapper around the legacy `LMS` class, mocking CLI inputs to expose a RESTful API.
+- **Frontend**: React (No-Build) using ES Modules, Tailwind CSS, and Framer Motion directly in the browser.
 
----
+## 📦 Installation & Deployment
 
----
-
-##  How the System Works
-
-- Each book is assigned a **unique Book ID** starting from `101`
-- Book data is stored in a **dictionary during runtime**
-- Book titles are saved permanently in `books.csv`
-- Issued books store:
-  - Lender name
-  - Issue date & time
-  - Current status (`Available / Already Issued`)
-- Admin-only actions require a **password**
-
----
-
-##  How to Run the Project
-
+### Local Setup
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/sunilnarayan419-ui/Library-Management-System.git
+   git clone https://github.com/yourusername/library-management-system.git
+   cd library-management-system
+   ```
 
+2. **Install Dependencies**
+   ```bash
+   pip install -r requirements.txt
+   ```
 
+3. **Run the Server**
+   ```bash
+   python server.py
+   ```
+   The app will start at `http://127.0.0.1:5000`.
 
+### Web Deployment (Heroku / Render)
+This project is configured for cloud deployment.
+- `Procfile` included for Gunicorn.
+- `requirements.txt` ready.
+- Just push to your platform of choice!
 
+## 🔑 Default Credentials
 
+| Role | Username / Email | Password / Mobile |
+| :--- | :--- | :--- |
+| **Administrator** | - | `admin123` |
+| **Librarian** | - | `lib123` |
+| **Student** | `student@uni.edu` | `1234567890` |
+
+## 📸 Screenshots
+*(Add your screenshots here)*
+
+---
+**v4.0 Update Notes**:
+- Added PWA Manifest and Service Worker support.
+- Implemented Librarian role.
+- Added `/api/history` endpoint and UI.

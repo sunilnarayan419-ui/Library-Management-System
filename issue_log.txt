@@ -5,3 +5,6 @@ Sunil Narayan issued 'Image Processing with MATLAB,"Eddins, Steve",signal_proces
 sunil issued 'Animal Farm,"Orwell, George",fiction,180,' on 2026-01-25 12:53:39
 sunil issued 'Animal Farm,"Orwell, George",fiction,180,' on 2026-01-25 12:57:33
 Tester issued 'Title,Author,Subject,Extent,Publisher' on 2026-01-31 15:05:35
+Sunilnarayan419 issued '"Moon and Sixpence, The","Maugham, William S",fiction,180,' on 2026-01-31 15:59:14
+Sunilnarayan419 issued 'Surely You're Joking Mr Feynman,"Feynman, Richard",science,198,Random House' on 2026-01-31 15:59:24
+Sunilnarayan419 issued 'Mein Kampf,"Hitler, Adolf",nonfiction,212,Rupa' on 2026-01-31 15:59:32

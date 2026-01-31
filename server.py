@@ -197,6 +197,16 @@ def login():
         else:
              return jsonify({"success": False, "message": "Invalid Admin Password"}), 401
              
+    elif role == 'librarian':
+        password = data.get('password')
+        if password == "lib123":
+             return jsonify({
+                 "success": True, 
+                 "user": {"name": "Librarian", "role": "librarian", "id": "LIB-001"}
+             })
+        else:
+             return jsonify({"success": False, "message": "Invalid Librarian Password"}), 401
+              
     elif role == 'student':
         email = data.get('email')
         mobile = data.get('mobile')
@@ -226,6 +236,34 @@ def login():
     return jsonify({"success": False, "message": "Invalid Role"}), 400
 
     return jsonify({"success": False, "message": "Invalid Role"}), 400
+
+# --- 3.1 History Endpoint ---
+@app.route('/api/history', methods=['GET'])
+def get_history():
+    """Parses issue_log.txt to return structured history data."""
+    if not hasattr(lms, 'log_file'):
+        return jsonify([])
+
+    history = []
+    try:
+        with open(lms.log_file, 'r') as f:
+            for line in f:
+                import re
+                match = re.match(r"(.*?) (issued|returned) \'(.*?)\' on (.*)", line.strip())
+                if match:
+                    history.append({
+                        "user": match.group(1),
+                        "action": match.group(2),
+                        "book": match.group(3),
+                        "date": match.group(4)
+                    })
+                # Fallback for simple lines
+                elif "issued" in line:
+                    history.append({"raw": line.strip(), "action": "issued"})
+    except FileNotFoundError:
+        pass
+    
+    return jsonify(history[::-1])
 
 # --- 4. AI Chatbot Logic ---
 
@@ -349,5 +387,9 @@ def index():
         return str(e)
 
 if __name__ == '__main__':
-    print("Starting Flask Adapter on port 5000...")
-    app.run(port=5000, debug=True)
+    import os
+    port = int(os.environ.get("PORT", 5000))
+    print(f"Starting Flask Adapter on port {port}...")
+    # Debug mode should be False in production, but keeping True for demo unless ENV set.
+    debug_mode = os.environ.get("FLASK_ENV") != "production"
+    app.run(host='0.0.0.0', port=port, debug=debug_mode)
