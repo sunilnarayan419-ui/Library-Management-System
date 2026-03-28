@@ -64,9 +64,6 @@ This project is configured for cloud deployment.
 | **Librarian** | - | `lib123` |
 | **Student** | `student@uni.edu` | `1234567890` |
 
-## 📸 Screenshots
-*(Add your screenshots here)*
-
 ---
 **v4.0 Update Notes**:
 - Added PWA Manifest and Service Worker support.
