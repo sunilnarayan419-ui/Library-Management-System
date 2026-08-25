@@ -1,0 +1,27 @@
+[project]
+name = "library-management-system"
+version = "5.0.0"
+description = "Production-grade modular Library Management Platform"
+requires-python = ">=3.11"
+
+[tool.ruff]
+line-length = 110
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+# E501: line length handled by formatter, not worth failing CI over.
+# B008: `Depends(...)` in argument defaults is the required, idiomatic
+# FastAPI pattern (see https://fastapi.tiangolo.com/tutorial/dependencies/) —
+# not a real bug here.
+ignore = ["E501", "B008"]
+
+[tool.mypy]
+python_version = "3.11"
+ignore_missing_imports = true
+disallow_untyped_defs = false
+exclude = ["tests/", "scripts/", "frontend/"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]

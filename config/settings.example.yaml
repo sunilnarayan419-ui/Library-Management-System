@@ -1,0 +1,30 @@
+# Optional reference for operators who prefer a YAML view of configuration.
+# The application itself only reads environment variables (see .env.example
+# and app/core/config.py) — this file is documentation, not consumed by code.
+
+app:
+  env: production
+  debug: false
+  name: "Library Management System"
+  version: "5.0.0"
+
+database:
+  url: "postgresql+psycopg2://lms_user:lms_password@db:5432/library"
+
+auth:
+  jwt_algorithm: HS256
+  access_token_expire_minutes: 30
+  refresh_token_expire_days: 7
+
+circulation:
+  default_loan_period_days: 14
+  max_renewals: 2
+  fine_per_day: 5.0
+
+ai:
+  provider: mock   # mock | anthropic
+  model: claude-sonnet-4-6
+
+cors:
+  origins:
+    - "https://your-frontend-domain.example"
